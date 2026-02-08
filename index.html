@@ -3,54 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NonoSecret | Pro</title>
+    <title>NonoSecret Pro 🤐</title>
+    <meta name="theme-color" id="themeColor" content="#0f0c29">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968292.png">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6c5ce7; --sec: #a29bfe; --bg: #0f0c29; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: white; text-align: center; padding: 20px; margin: 0; }
-        .card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border-radius: 25px; padding: 25px; max-width: 420px; margin: 15px auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-        button { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--p); color: white; font-weight: bold; cursor: pointer; font-family: 'Cairo'; margin-top: 10px; transition: 0.3s; }
-        button:active { transform: scale(0.95); }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: none; font-family: 'Cairo'; outline: none; box-sizing: border-box; background: rgba(255,255,255,0.9); }
-        #linkBox { background: #fff; color: #333; padding: 15px; border-radius: 12px; margin-top: 15px; display: none; }
-        .msg-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-top: 12px; text-align: right; border-right: 5px solid var(--p); animation: slideIn 0.3s; }
-        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .badge { background: var(--p); padding: 2px 10px; border-radius: 20px; font-size: 12px; margin-left: 10px; }
+        :root { --p: #6c5ce7; --bg: #0f0c29; --card-bg: rgba(255, 255, 255, 0.08); }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: white; text-align: center; padding: 20px; margin: 0; transition: 0.5s; }
+        .card { background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 25px; padding: 25px; max-width: 420px; margin: 15px auto; border: 1px solid rgba(255,255,255,0.1); }
         
-        /* ستايل زرار الإخفاء */
-        .toggle-btn { background: #2d3436; width: auto; padding: 5px 15px; font-size: 12px; display: inline-block; margin-bottom: 10px; }
+        /* القائمة الجانبية */
+        .side-menu { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: #1a1a2e; transition: 0.3s; z-index: 1000; padding-top: 60px; text-align: right; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+        .side-menu a, .menu-item { padding: 15px 25px; text-decoration: none; font-size: 16px; color: white; display: block; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .menu-btn { position: fixed; top: 20px; right: 20px; font-size: 25px; cursor: pointer; z-index: 1001; background: var(--p); padding: 5px 12px; border-radius: 8px; }
+
+        button { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--p); color: white; font-weight: bold; cursor: pointer; font-family: 'Cairo'; margin-top: 10px; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: none; font-family: 'Cairo'; outline: none; box-sizing: border-box; background: rgba(255,255,255,0.95); color: #333; }
+        .msg-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-top: 12px; text-align: right; border-right: 5px solid var(--p); }
     </style>
 </head>
 <body>
+
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    
+    <div id="mySideMenu" class="side-menu">
+        <a href="#" onclick="toggleMenu()" style="color: #ff7675;">❌ إغلاق القائمة</a>
+        <div class="menu-item" onclick="changeTheme()">🎨 تغيير ألوان الموقع</div>
+        <div class="menu-item" onclick="updatePassPrompt()">🔑 تغيير كلمة السر</div>
+        <div class="menu-item" onclick="installApp()">📲 تثبيت كـ أبلكيشن</div>
+        <hr style="opacity: 0.1;">
+        <a href="https://noorabdelhalim77-rgb.github.io/NonoChat-/">🏠 الصفحة الرئيسية</a>
+    </div>
+
     <div class="card">
         <h1>NonoSecret 🤐</h1>
         
         <div id="sendArea" style="display:none;">
-            <p id="target" style="font-weight:bold; color:var(--sec);"></p>
-            <textarea id="msg" placeholder="اكتب صراحتك السرية..."></textarea>
+            <p id="target" style="font-weight:bold; color:#a29bfe;"></p>
+            <textarea id="msg" placeholder="اكتب صراحتك السرية هنا..."></textarea>
             <button onclick="send()">إرسال صراحة 🚀</button>
         </div>
 
-        <hr style="opacity:0.1; margin:20px 0;">
-
         <div id="setup">
-            <h3 style="font-size: 16px;">اصنع رابطك الخاص ✨</h3>
-            <input type="text" id="uName" placeholder="اكتبي اسمك هنا">
+            <h3 style="font-size: 16px;">إنشاء رابط جديد ✨</h3>
+            <input type="text" id="uName" placeholder="اكتبي اسمك">
+            <input type="password" id="uPass" placeholder="اختر كلمة سر للصندوق">
             <button onclick="reg()">إنشاء الرابط الخاص بي</button>
-            <div id="linkBox">
-                <span id="theLink"></span>
-                <button style="background:#2d3436; margin-top:5px; font-size:13px;" onclick="copyLink()">نسخ الرابط 📋</button>
+            <div id="linkBox" style="display:none; background:#fff; color:#333; padding:15px; border-radius:12px; margin-top:15px;">
+                <span id="theLink" style="font-size:11px; word-break:break-all;"></span>
+                <button style="background:#2d3436; margin-top:10px;" onclick="copyLink()">نسخ الرابط 📋</button>
             </div>
         </div>
 
-        <hr style="opacity:0.1; margin:20px 0;">
-
         <div id="inbox" style="display:none;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="font-size: 18px;">📥 الوارد <span class="badge" id="count">0</span></h3>
-                <button class="toggle-btn" id="toggleBtn" onclick="toggleInbox()">إخفاء الرسائل 👁️‍🗨️</button>
+            <hr style="opacity:0.1; margin:20px 0;">
+            <div id="lockArea">
+                <p style="font-size: 13px;">هذا الصندوق محمي بكلمة سر 🔐</p>
+                <input type="password" id="checkPass" placeholder="أدخل كلمة السر لرؤية الرسائل">
+                <button onclick="unlockInbox()" style="background:#2ecc71;">فتح الصندوق</button>
             </div>
-            <div id="list"></div>
+            <div id="listArea" style="display:none;">
+                <h3 style="font-size: 18px;">📥 الوارد</h3>
+                <div id="list"></div>
+            </div>
         </div>
     </div>
 
@@ -67,57 +82,88 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let u = new URLSearchParams(window.location.search).get('u');
+        function toggleMenu() {
+            let menu = document.getElementById("mySideMenu");
+            menu.style.right = menu.style.right === "0px" ? "-280px" : "0px";
+        }
 
+        // --- 1. ميزة تغيير الألوان ---
+        let themes = [
+            {bg: "#0f0c29", p: "#6c5ce7"},
+            {bg: "#2d3436", p: "#fab1a0"},
+            {bg: "#1e272e", p: "#00d8d6"},
+            {bg: "#636e72", p: "#fdcb6e"}
+        ];
+        let currentTheme = 0;
+        function changeTheme() {
+            currentTheme = (currentTheme + 1) % themes.length;
+            document.documentElement.style.setProperty('--bg', themes[currentTheme].bg);
+            document.documentElement.style.setProperty('--p', themes[currentTheme].p);
+            toggleMenu();
+        }
+
+        // --- 2. ميزة تغيير كلمة السر ---
+        function updatePassPrompt() {
+            if(document.getElementById('listArea').style.display === 'none') {
+                return alert('يجب فتح الصندوق بكلمة السر القديمة أولاً قبل تغييرها!');
+            }
+            let newPass = prompt("أدخلي كلمة السر الجديدة:");
+            if(newPass) {
+                db.ref('box/' + u + '/config').update({ password: newPass });
+                alert('تم تحديث كلمة السر بنجاح! 🔑');
+            }
+            toggleMenu();
+        }
+
+        // --- 3. ميزة تثبيت الأبلكيشن ---
+        function installApp() {
+            alert('لتثبيت التطبيق: اضغطي على الثلاث نقاط في المتصفح ثم اختاري "Add to Home screen" أو "تثبيت التطبيق" 📲');
+            toggleMenu();
+        }
+
+        let u = new URLSearchParams(window.location.search).get('u');
         if(u) {
             document.getElementById('sendArea').style.display = 'block';
             document.getElementById('inbox').style.display = 'block';
-            document.getElementById('target').innerText = "صراحة لـ " + decodeURIComponent(u).split('_')[0];
-            
-            db.ref('box/' + u).on('value', (s) => {
-                let h = ""; let c = 0;
-                s.forEach((child) => { 
-                    h = `<div class="msg-box">${child.val().text}</div>` + h; 
-                    c++;
-                });
+            document.getElementById('target').innerText = "أرسل صراحة لـ " + decodeURIComponent(u).split('_')[0];
+            db.ref('box/' + u + '/messages').on('value', (s) => {
+                let h = ""; s.forEach((c) => { h = `<div class="msg-box">${c.val().text}</div>` + h; });
                 document.getElementById('list').innerHTML = h || "لا يوجد رسائل حالياً";
-                document.getElementById('count').innerText = c;
             });
-        }
-
-        // دالة الإخفاء والإظهار
-        function toggleInbox() {
-            let list = document.getElementById('list');
-            let btn = document.getElementById('toggleBtn');
-            if (list.style.display === "none") {
-                list.style.display = "block";
-                btn.innerText = "إخفاء الرسائل 👁️‍🗨️";
-            } else {
-                list.style.display = "none";
-                btn.innerText = "إظهار الرسائل 👁️";
-            }
         }
 
         function reg() {
             let n = document.getElementById('uName').value;
-            if(!n) return alert('اكتبي اسمك!');
+            let p = document.getElementById('uPass').value;
+            if(!n || !p) return alert('اكتبي الاسم وكلمة السر!');
             let id = Math.floor(Math.random() * 9000) + 1000;
-            let link = window.location.origin + window.location.pathname + '?u=' + encodeURIComponent(n) + '_' + id;
-            document.getElementById('theLink').innerText = link;
+            let userId = encodeURIComponent(n) + '_' + id;
+            db.ref('box/' + userId + '/config').set({ password: p });
+            document.getElementById('theLink').innerText = window.location.origin + window.location.pathname + '?u=' + userId;
             document.getElementById('linkBox').style.display = 'block';
+        }
+
+        function unlockInbox() {
+            let pass = document.getElementById('checkPass').value;
+            db.ref('box/' + u + '/config/password').once('value').then((s) => {
+                if(s.val() === pass) {
+                    document.getElementById('lockArea').style.display = 'none';
+                    document.getElementById('listArea').style.display = 'block';
+                } else { alert('خطأ في كلمة السر!'); }
+            });
         }
 
         function copyLink() {
             navigator.clipboard.writeText(document.getElementById('theLink').innerText);
-            alert('تم نسخ الرابط! 🤐');
+            alert('تم النسخ! انشريه الآن 🤐');
         }
 
         function send() {
             let m = document.getElementById('msg').value;
-            if(!m) return alert('اكتبي الرسالة!');
-            db.ref('box/' + u).push({ text: m });
-            alert('تم الإرسال بنجاح!');
-            document.getElementById('msgInput').value = "";
+            if(!m) return alert('اكتبي صراحتك أولاً!');
+            db.ref('box/' + u + '/messages').push({ text: m });
+            alert('تم الإرسال بنجاح! 🚀');
+            document.getElementById('msg').value = "";
         }
     </script>
 </body>
