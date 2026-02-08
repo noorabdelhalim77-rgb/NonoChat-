@@ -1,60 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NonoSecret | صراحة ميكاترونكس</title>
+    <title>NonoSecret | صراحة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --main-color: #6c5ce7; --bg-color: #0f0c29; }
-        body { font-family: 'Cairo', sans-serif; background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e); color: white; text-align: center; padding: 20px; min-height: 100vh; }
-        .card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); max-width: 400px; margin: auto; border: 1px solid rgba(255,255,255,0.1); }
-        h1 { color: #a29bfe; margin-bottom: 10px; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; outline: none; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--main-color); color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        body { font-family: 'Cairo', sans-serif; background: #0f0c29; color: white; text-align: center; padding: 20px; margin: 0; }
+        .card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px; max-width: 400px; margin: 20px auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-family: 'Cairo'; outline: none; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #6c5ce7; color: white; font-weight: bold; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; }
         button:hover { background: #a29bfe; transform: scale(1.02); }
-        .message-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-top: 15px; text-align: right; border-right: 4px solid var(--main-color); }
+        #linkOut { background: #fff; color: #333; padding: 15px; border-radius: 10px; margin-top: 15px; display: none; word-break: break-all; font-weight: bold; font-size: 14px; }
+        .msg-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-top: 15px; text-align: right; border-right: 5px solid #6c5ce7; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>🤐 NonoSecret</h1>
-        <p>مساحة آمنة للصراحة والإبداع</p>
-        
-        <div id="setup-section">
-            <input type="text" id="userName" placeholder="اكتبي اسمك هنا (نور)">
-            <button onclick="createLink()">إنشاء الرابط الخاص بي</button>
+        <h1>NonoSecret 🤐</h1>
+        <div id="setup">
+            <p>استقبلي رسائل سرية من أصدقائك!</p>
+            <input type="text" id="uName" placeholder="اكتبي اسمك هنا">
+            <button onclick="reg()">إنشاء الرابط الخاص بي</button>
+            <div id="linkOut"></div>
         </div>
-
-        <div id="chat-section" style="display:none;">
-            <h3 id="targetName">أرسل رسالة سرية لـ</h3>
-            <textarea id="msgContent" placeholder="اكتب رسالتك السرية هنا..."></textarea>
-            <button onclick="sendMsg()">إرسال بصمت 🚀</button>
+        <div id="chat" style="display:none;">
+            <p id="target"></p>
+            <textarea id="msg" placeholder="اكتب صراحتك السرية هنا..."></textarea>
+            <button onclick="send()">إرسال صراحة 🚀</button>
         </div>
-
         <hr style="margin: 30px 0; opacity: 0.2;">
         <h3>📥 رسايلك الواردة</h3>
-        <div id="messagesList">لا يوجد رسائل بعد.. جربي تعملي Refresh</div>
+        <div id="list">في انتظار أول رسالة..</div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
     <script>
         const firebaseConfig = {
-            apiKey: "***حطي الـ API Key هنا***",
-            authDomain: "***حطي الـ Auth Domain هنا***",
-            databaseURL: "https://nonosecretchat-default-rtdb.firebaseio.com/",
+            apiKey: "AIzaSyDFWvrDn9SVHga8KZEzgJomfzqwLXAwCdI",
+            authDomain: "nonosecretchat.firebaseapp.com",
             projectId: "nonosecretchat",
-            storageBucket: "nonosecretchat.appspot.com",
-            messagingSenderId: "***حطي الرقم هنا***",
-            appId: "***حطي الـ App ID هنا***"
+            databaseURL: "https://nonosecretchat-default-rtdb.firebaseio.com/",
+            appId: "1:829424619714:web:8069677332219804e3860d"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // باقي المنطق البرمجي السريع... (هكملهولك في الرفع)
-    </
+        function reg() {
+            let n = document.getElementById('uName').value;
+            if(!n) return alert('اكتبي اسمك!');
+            let id = Math.floor(Math.random() * 9000) + 1000;
+            let link = window.location.origin + window.location.pathname + '?u=' + encodeURIComponent(n) + '_' + id;
+            let out = document.getElementById('linkOut');
+            out.style.display = 'block';
+            out.innerText = "انسخي الرابط وانشريه: " + link;
+        }
 
+        let u = new URLSearchParams(window.location.search).get('u');
+        if(u) {
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('chat').style.display = 'block';
+            document.getElementById('target').innerText = "صراحة لـ " + decodeURIComponent(u).split('_')[0];
+            db.ref('box/' + u).on('value', (s) => {
+                let h = "";
+                s.forEach((c) => { h = `<div class="msg-box">${c.val().text}</div>` + h; });
+                document.getElementById('list').innerHTML = h || "لا توجد رسائل حالياً";
+            });
+        }
 
-
-
-        
+        function send() {
+            let m = document.getElementById('msg').value;
+            if(!m) return alert('اكتبي الرسالة!');
+            db.ref('box/' + u).push({ text: m });
+            alert('تم الإرسال بنجاح! 🤐');
+            document.getElementById('msg').value = "";
+        }
+    </script>
+</body>
+</html>
