@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>NonoSecret | منصة المصارحة العالمية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        :root { --p: #6c5ce7; --bg: #f0f2f5; }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 20px; text-align: center; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 450px; margin: auto; }
+        input { width: 85%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        button { background: var(--p); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 90%; font-weight: bold; }
+        .msg-box { background: #fafafa; padding: 15px; margin-top: 15px; border-radius: 10px; text-align: right; border-right: 5px solid var(--p); }
+        .reply-text { color: #d63031; font-weight: bold; margin-top: 8px; padding-right: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 id="header">NonoSecret 🤐</h2>
+    
+    <div id="init">
+        <p>أنشئ حسابك الآن واستقبل رسائل سرية من أصدقائك!</p>
+        <input type="text" id="uName" placeholder="اكتب اسمك هنا...">
+        <button onclick="reg()">إنشاء رابطي الخاص</button>
+    </div>
+
+    <div id="sendArea" style="display:none;">
+        <p id="target"></p>
+        <input type="text" id="msg" placeholder="اكتب صراحتك السرية...">
+        <button onclick="send()">إرسال صراحة</button>
+    </div>
+
+    <div id="adminArea" style="display:none;">
+        <h3>رسايلك الواردة:</h3>
+        <div id="list"></div>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFMW0n9SVHgsBKZErzgJomFzqmLXAwCdI",
+      authDomain: "nonosecretchat.firebaseapp.com",
+      projectId: "nonosecretchat",
+      databaseURL: "https://nonosecretchat-default-rtdb.firebaseio.com/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get('u');
+
+    if(uid) {
+        document.getElementById('init').style.display = 'none';
+        document.getElementById('sendArea').style.display = 'block';
+        document.getElementById('target').innerText = "أنت الآن ترسل رسالة مجهولة إلى: " + uid.split('_')[0];
+    }
+
+    function reg() {
+        const name = document.getElementById('uName').value;
+        if(name) {
+            const id = name + "_" + Math.floor(Math.random()*10000);
+            const link = window.location.href.split('?')[0] + "?u=" + id;
+            alert("هذا رابطك لاستقبال الرسائل:\n" + link);
+            document.getElementById('init').style.display = 'none';
+            document.getElementById('adminArea').style.display = 'block';
+            loadMsgs(id);
+        }
+    }
+
+    function send() {
+        const t = document.getElementById('msg').value;
+        if(t) {
+            db.ref("box/"+uid).push().set({ text: t, time: Date.now() });
+            alert("تم الإرسال بنجاح! ✅");
+            document.getElementById('msg').value = '';
+        }
+    }
+
+    function loadMsgs(myId) {
+        db.ref("box/"+myId).on("child_added", (s) => {
+            const d = s.val();
+            const key = s.key;
+            const div = document.createElement("div");
+            div.className = "msg-box";
+            div.innerHTML = `
+                <div>${d.text}</div>
+                <div class="reply-text" id="r-${key}">${d.reply || ''}</div>
+                <div style="margin-top:10px;">
+                    <input type="text" id="in-${key}" placeholder="رد على الرسالة...">
+                    <button style="width:auto; padding:5px 15px;" onclick="rep('${myId}','${key}')">رد</button>
+                </div>
+            `;
+            document.getElementById('list').prepend(div);
+        });
+    }
+
+    function rep(myId, mId) {
+        const r = document.getElementById("in-"+mId).value;
+        if(r) {
+            db.ref("box/"+myId+"/"+mId).update({ reply: r });
+            document.getElementById("r-"+mId).innerText = "ردك: " + r;
+            document.getElementById("in-"+mId).value = '';
+        }
+    }
+</script>
+</body>
+</html>
